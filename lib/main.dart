@@ -5,13 +5,10 @@ import 'views/auth_gate.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Supabase backend
   await Supabase.initialize(
     url: AppConfig.supabaseUrl,
     anonKey: AppConfig.supabaseAnonKey,
   );
-
   runApp(const TwoHeartzApp());
 }
 
@@ -30,7 +27,6 @@ class TwoHeartzApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      // Starts the app at AuthGate (routes to Login or Navigation)
       home: const AuthGate(),
     );
   }
