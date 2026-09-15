@@ -3,7 +3,7 @@ import '../models/task_model.dart';
 import '../models/guest_model.dart';
 import '../models/song_model.dart';
 import '../models/note_model.dart';
-import '../models/task_model.dart';
+import '../models/card_model.dart';
 
 class SupabaseDatabaseService {
   final SupabaseClient _client = Supabase.instance.client;
@@ -58,6 +58,26 @@ class SupabaseDatabaseService {
       'song_url': song,
       'description': desc,
     });
+  }
+
+  // STEP 2 METHODS ADDED HERE:
+  Stream<List<CardModel>> getCardsStream() {
+    return _client.from('cards').stream(primaryKey: ['id']).map(
+          (list) => list.map((item) => CardModel.fromMap(item)).toList(),
+    );
+  }
+
+  Future<void> saveCard(CardModel card) async {
+    final weddingId = await getCurrentWeddingId();
+
+    if (card.id.isEmpty) {
+      await _client.from('cards').insert({
+        ...card.toMap(),
+        'wedding_id': weddingId,
+      });
+    } else {
+      await _client.from('cards').update(card.toMap()).eq('id', card.id);
+    }
   }
 
   Stream<List<SongModel>> getSongsStream() {
